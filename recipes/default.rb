@@ -23,3 +23,27 @@ directory "/opt/logstash" do
   group "root"
   mode "0755"
 end
+
+execute "extract-logstash" do
+  command "gtar -zxvf #{Chef::Config[:file_cache_path]}/logstash-#{node['logstash']['version']}.tar.gz"
+  cwd "/opt/logstash"
+  not_if { ::File.exists?("/opt/logstash/logstash-#{node['logstash']['version']}") }
+end
+
+execute "svccfg-import-logstashmanifest" do
+  command "/usr/sbin/svccfg import /var/chef/cookbooks/logstash/files/default/manifests/logstash.xml"
+  not_if "/usr/bin/svcs -H logstash"
+end
+
+execute "svccfg-import-logstash-web-manifest" do
+  command "/usr/sbin/svccfg import /var/chef/cookbooks/logstash/files/default/manifests/logstash-web.xml"
+  not_if "/usr/bin/svcs -H logstash-web"
+end
+
+service "logstash" do
+  action [ :enable ]
+end
+
+service "logstash-web" do
+  action [ :enable ]
+end
