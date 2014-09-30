@@ -1,5 +1,5 @@
 #
-# Cookbook Name::  helpspot
+# Cookbook Name:: logstash
 # Attributes:: default
 #
 # Copyright 2014, Jacques Marneweck
